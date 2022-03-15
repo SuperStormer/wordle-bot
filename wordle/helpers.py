@@ -44,8 +44,8 @@ def wordle_message(wordle: Wordle):
 		
 		squares = get_squares(wordle.actual, guess)
 		
-		squares_str = " ".join(str(square_emoji(square)) for square in squares)
-		letters_str = " ".join(str(letter_emoji(letter)) for letter in guess)
+		squares_str = "".join(str(square_emoji(square)) for square in squares)
+		letters_str = "".join(str(letter_emoji(letter)) for letter in guess)
 		message.extend([letters_str, squares_str])
 		
 		if all(square == Square.FULL for square in squares):
