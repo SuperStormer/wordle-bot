@@ -1,1 +1,2 @@
 discord.py @ git+https://github.com/Rapptz/discord.py.git@934ab4151add79a2140c7084679b15b6c5eb6f91
+python-dotenv==0.19.2
