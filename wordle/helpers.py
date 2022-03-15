@@ -1,5 +1,8 @@
 from .wordle import Square, Wordle
 
+TOTAL_GUESSES = 6
+WORD_LENGTH = 5
+
 def letter_emoji(letter):
 	return f":regional_indicator_{letter}:"
 
@@ -12,7 +15,7 @@ def square_emoji(square: Square):
 	return f":{emoji_name}:"
 
 def get_squares(actual: str, guess: str):
-	squares = [Square.WRONG] * 5
+	squares = [Square.WRONG] * WORD_LENGTH
 	# first go through the fully correct guesses
 	for i, chars in enumerate(zip(actual, guess)):
 		a, g = chars
@@ -49,12 +52,12 @@ def wordle_message(wordle: Wordle):
 			message.append("You are correct!")
 			ended = True
 	
-	if len(wordle.guesses) == 5:
+	if len(wordle.guesses) == TOTAL_GUESSES and not ended:
 		message.append("You lost!")
 		message.append(f"The word was {wordle.actual!r}")
 		ended = True
 	if not ended:
-		message.append(f"Guesses Left: {5-len(wordle.guesses)}")
+		message.append(f"Guesses Left: {TOTAL_GUESSES-len(wordle.guesses)}")
 		message.append(
 			f"Remaining Letters: {''.join(letter_emoji(letter) for letter in wordle.remaining)}"
 		)

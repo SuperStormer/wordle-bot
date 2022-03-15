@@ -3,14 +3,14 @@ import json
 import os
 import random
 import re
-from typing import Optional
+from typing import Callable, Optional
 
 import discord
 from discord import app_commands
 from discord.ext import commands
 from dotenv import load_dotenv
 
-from .helpers import wordle_message
+from .helpers import wordle_message, WORD_LENGTH
 from .wordle import Wordle
 
 # setup
@@ -21,7 +21,7 @@ intents.message_content = True  # pylint: disable=assigning-non-slot
 bot = commands.Bot(command_prefix=["w.", "w!"], intents=intents)
 
 current_wordles: dict[int, Wordle] = {}
-VALID_GUESS = re.compile(r"[A-Z]{5}")
+VALID_GUESS = re.compile(r"[A-Z]{%s}" % WORD_LENGTH)
 
 # word list stuff
 with open("words.json", encoding="utf-8") as f:
@@ -34,16 +34,20 @@ def get_word() -> str:
 
 # abstract commands
 
-async def handle_guess(guess, send_message, channel_id):
+async def handle_guess(guess: str, send_message: Callable, channel_id: int):
 	if channel_id not in current_wordles:
 		await send_message("There are no wordles currently running in this channel.")
 		return
 	
-	if len(guess) != 5:
+	guess = guess.lower()
+	
+	if len(guess) != WORD_LENGTH:
 		await send_message(f"{guess!r} is {len(guess)} characters long.")
 		return
 	
-	guess = guess.lower()
+	if not guess.isalpha():
+		await send_message(f"{guess!r} is not a word.")
+	
 	if guess not in valid_words:
 		await send_message(f"{guess!r} is not a valid word.")
 		return
@@ -105,7 +109,7 @@ async def on_message(message: discord.Message):
 		await bot.process_commands(message)
 
 # give up
-@bot.command(name="quit", aliases=["end", "q"])
+@bot.command(name="quit", aliases=["end", "q", "stop"])
 async def quit_cmd(ctx: commands.Context):
 	await quit_wordle(ctx.send, ctx.channel.id)
 
@@ -114,8 +118,7 @@ async def quit_slash(interaction: discord.Interaction):
 	await quit_wordle(interaction.response.send_message, interaction.channel_id)
 
 # debug
-
-@bot.command(name="debug", alias="cheat")
+@bot.command(name="debug", aliases=["cheat", "get_word"])
 @commands.is_owner()
 async def cheat(ctx: commands.Context, channel: Optional[discord.TextChannel] = None):
 	if channel is None:
@@ -133,7 +136,7 @@ async def set_wordle(
 		assert isinstance(ctx.channel, discord.TextChannel)
 		channel = ctx.channel
 	
-	if len(word) != 5:
+	if len(word) != WORD_LENGTH:
 		await ctx.send(f"{word!r} is {len(word)} characters long.")
 		return
 	
@@ -152,7 +155,7 @@ async def set_word(ctx: commands.Context, word: str, channel: Optional[discord.T
 		await ctx.send("There are no wordles currently running in this channel.")
 		return
 	
-	if len(word) != 5:
+	if len(word) != WORD_LENGTH:
 		await ctx.send(f"{word!r} is {len(word)} characters long.")
 		return
 	
