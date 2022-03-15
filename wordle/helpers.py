@@ -46,10 +46,10 @@ def wordle_message(wordle: Wordle):
 		
 		squares_str = " ".join(str(square_emoji(square)) for square in squares)
 		letters_str = " ".join(str(letter_emoji(letter)) for letter in guess)
-		message.extend([letters_str, squares_str, ""])
+		message.extend([letters_str, squares_str])
 		
 		if all(square == Square.FULL for square in squares):
-			message.append("You are correct!")
+			message.append(f"You won in {len(wordle.guesses)}!")
 			ended = True
 	
 	if len(wordle.guesses) == TOTAL_GUESSES and not ended:

@@ -118,7 +118,7 @@ async def quit_slash(interaction: discord.Interaction):
 	await quit_wordle(interaction.response.send_message, interaction.channel_id)
 
 # debug
-@bot.command(name="debug", aliases=["cheat", "get_word"])
+@bot.command(name="debug", aliases=["cheat", "get_word"], hidden=True)
 @commands.is_owner()
 async def cheat(ctx: commands.Context, channel: Optional[discord.TextChannel] = None):
 	if channel is None:
@@ -127,7 +127,7 @@ async def cheat(ctx: commands.Context, channel: Optional[discord.TextChannel] = 
 	
 	await ctx.send(current_wordles[channel.id].actual)
 
-@bot.command(name="set_wordle")
+@bot.command(name="set_wordle", hidden=True)
 @commands.is_owner()
 async def set_wordle(
 	ctx: commands.Context, word: str, channel: Optional[discord.TextChannel] = None
@@ -144,7 +144,7 @@ async def set_wordle(
 	current_wordles[channel.id] = wordle
 	await ctx.send(f"Set {channel.mention}'s word to {word}")
 
-@bot.command(name="set_word")
+@bot.command(name="set_word", hidden=True)
 @commands.is_owner()
 async def set_word(ctx: commands.Context, word: str, channel: Optional[discord.TextChannel] = None):
 	if channel is None:
@@ -162,7 +162,7 @@ async def set_word(ctx: commands.Context, word: str, channel: Optional[discord.T
 	current_wordles[channel.id].actual = word
 	await ctx.send(f"Set {channel.mention}'s word to {word}")
 
-@bot.command(name="eval")
+@bot.command(name="eval", hidden=True)
 @commands.is_owner()
 async def eval_cmd(ctx: commands.Context, *, arg):
 	await ctx.send(eval(arg))
