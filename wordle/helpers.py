@@ -44,8 +44,8 @@ def wordle_message(wordle: Wordle):
 		
 		squares = get_squares(wordle.actual, guess)
 		
-		squares_str = "".join(str(square_emoji(square)) for square in squares)
-		letters_str = "".join(str(letter_emoji(letter)) for letter in guess)
+		squares_str = "\u200B".join(str(square_emoji(square)) for square in squares)
+		letters_str = "\u200B".join(str(letter_emoji(letter)) for letter in guess)
 		message.extend([letters_str, squares_str])
 		
 		if all(square == Square.FULL for square in squares):
@@ -58,7 +58,8 @@ def wordle_message(wordle: Wordle):
 		ended = True
 	if not ended:
 		message.append(f"Guesses Left: {TOTAL_GUESSES-len(wordle.guesses)}")
+		zws = '\u200B'
 		message.append(
-			f"Remaining Letters: {''.join(letter_emoji(letter) for letter in wordle.remaining)}"
+			f"Remaining Letters: {zws.join(letter_emoji(letter) for letter in wordle.remaining)}"
 		)
 	return "\n".join(message), ended
